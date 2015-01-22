@@ -29,10 +29,17 @@ function entity_boilerplate_entity_info() {
       'bundle' => 'type',
     ),
     'access callback' => 'my_entity_access',
+    'access arguments' => array(
+      'user key' => 'uid',
+      'access tag' => 'my_entity_access',
+    ),
+    'permission labels' => array(
+      'singular' => t('My Entity'),
+      'plural' => t('My Entities'),
+    ),
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
     'module' => 'entity_boilerplate',
-    'bundles' => array(),
   );
 
   // Add bundle info but bypass entity_load() as we cannot use it here.
@@ -511,4 +518,14 @@ function entity_boilerplate_entity_access_query_alter($query, $entity_type, $bas
     // we falsify this query. View checks are access grants, not access denials.
     $query->where('1 = 0');
   }
+}
+
+/**
+ * Implements hook_view_api().
+ */
+function entity_boilerplate_views_api() {
+  return array(
+    'api' => '3.0',
+    'path' => drupal_get_path('module', 'entity_boilerplate') . '/views',
+  );
 }
