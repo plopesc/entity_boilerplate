@@ -1,0 +1,263 @@
+<?php
+
+/**
+ * @file
+ * Specific form handlers for My Entity entity.
+ */
+
+/**
+ * Generates the My Entity type editing form.
+ */
+function my_entity_type_form($form, &$form_state, $my_entity_type, $op = 'edit') {
+
+  if ($op == 'clone') {
+    $my_entity_type->label .= ' (cloned)';
+    $my_entity_type->type = '';
+  }
+
+  $form['label'] = array(
+    '#title' => t('Label'),
+    '#type' => 'textfield',
+    '#default_value' => $my_entity_type->label,
+    '#description' => t('The human-readable name of this My Entity type.'),
+    '#required' => TRUE,
+    '#size' => 30,
+  );
+
+  // Machine-readable type name.
+  $form['type'] = array(
+    '#type' => 'machine_name',
+    '#default_value' => isset($my_entity_type->type) ? $my_entity_type->type : '',
+    '#maxlength' => 32,
+    '#disabled' => $my_entity_type->isLocked() && $op != 'clone',
+    '#machine_name' => array(
+      'exists' => 'my_entity_type_load',
+      'source' => array('label'),
+    ),
+    '#description' => t('A unique machine-readable name for this My Entity type. It must only contain lowercase letters, numbers, and underscores.'),
+  );
+
+  $form['description'] = array(
+    '#type' => 'textarea',
+    '#default_value' => isset($my_entity_type->description) ? $my_entity_type->description : '',
+    '#description' => t('Description about the My Entity type.'),
+  );
+
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save My Entity type'),
+    '#weight' => 40,
+  );
+
+  if (!$my_entity_type->isLocked() && $op != 'add' && $op != 'clone') {
+    $form['actions']['delete'] = array(
+      '#type' => 'submit',
+      '#value' => t('Delete My Entity type'),
+      '#weight' => 45,
+      '#limit_validation_errors' => array(),
+      '#submit' => array('my_entity_type_form_submit_delete'),
+    );
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for creating/editing My Entity type.
+ */
+function my_entity_type_form_submit(&$form, &$form_state) {
+  $my_entity_type = entity_ui_form_submit_build_entity($form, $form_state);
+  // Save and go back.
+  my_entity_type_save($my_entity_type);
+
+  if ($form_state['op'] == 'edit') {
+    drupal_set_message(t('My Entity type @type updated', array('@type' => $my_entity_type->type)));
+  }
+  else {
+    drupal_set_message(t('My Entity type @type created', array('@type' => $my_entity_type->type)));
+  }
+
+  // Redirect user back to list of My Entity types.
+  $form_state['redirect'] = 'admin/structure/my_entity-types';
+}
+
+/**
+ * Submit handler for deleting My Entity type.
+ */
+function my_entity_type_form_submit_delete(&$form, &$form_state) {
+  $form_state['redirect'] = 'admin/structure/my_entity-types/' . $form_state['my_entity_type']->type . '/delete';
+}
+
+/**
+ * My Entity type delete form.
+ */
+function my_entity_type_form_delete_confirm($form, &$form_state, $my_entity_type) {
+  $form_state['my_entity_type'] = $my_entity_type;
+  // Always provide entity id in the same form key as in the entity edit form.
+  $form['my_entity_type_id'] = array('#type' => 'value', '#value' => entity_id('my_entity_type', $my_entity_type));
+  return confirm_form($form,
+    t('Are you sure you want to delete My Entity type %title?', array('%title' => entity_label('my_entity_type_type', $my_entity_type))),
+    'admin/structure/my_entity-types/' . entity_id('my_entity_type', $my_entity_type),
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+/**
+ * My Entity type delete form submit handler.
+ */
+function my_entity_type_form_delete_confirm_submit($form, &$form_state) {
+  $my_entity_type = $form_state['my_entity_type'];
+  my_entity_type_delete($my_entity_type);
+
+  watchdog('my_entity_type', '@type: deleted %title.', array('@type' => $my_entity_type->type, '%title' => $my_entity_type->label));
+  drupal_set_message(t('@type %title has been deleted.', array('@type' => $my_entity_type->type, '%title' => $my_entity_type->label)));
+
+  $form_state['redirect'] = 'admin/structure/my_entity-types';
+}
+
+/**
+ * Page to select My Entity Type to add new My Entity.
+ */
+function my_entity_admin_add_page() {
+  $items = array();
+  foreach (my_entity_types() as $my_entity_type_key => $my_entity_type) {
+    $items[] = l(entity_label('my_entity_type', $my_entity_type), 'my_entity/add/' . $my_entity_type_key);
+  }
+  if (!empty($items)) {
+    return array(
+      'list' => array(
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#title' => t('Select type of My Entity to create.')
+      )
+    );
+  }
+  else {
+    return t('You need to add My Entity types before create My Entity items. !link', array('!link' => l(t('You can add My Entity types here.'), 'admin/structure/my_entity-types/add', array('query' => array('destination' => 'my_entity/add')))));
+  }
+}
+
+/**
+ * Add new My Entity page callback.
+ */
+function my_entity_add($type) {
+  $my_entity_type = my_entity_types($type);
+
+  $my_entity = entity_create('my_entity', array('type' => $type));
+  drupal_set_title(t('Create @name', array('@name' => entity_label('my_entity_type', $my_entity_type))));
+
+  $output = drupal_get_form('my_entity_form', $my_entity);
+
+  return $output;
+}
+
+/**
+ * My Entity Form.
+ */
+function my_entity_form($form, &$form_state, $my_entity) {
+  $form_state['my_entity'] = $my_entity;
+
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#title' => t('Name'),
+    '#default_value' => $my_entity->title,
+  );
+
+  $form['description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Description'),
+    '#default_value' => $my_entity->description,
+  );
+
+  $form['uid'] = array(
+    '#type' => 'value',
+    '#value' => $my_entity->uid,
+  );
+
+  field_attach_form('my_entity', $my_entity, $form, $form_state);
+
+  $submit = array();
+  if (!empty($form['#submit'])) {
+    $submit += $form['#submit'];
+  }
+
+  $form['actions'] = array(
+    '#weight' => 100,
+  );
+
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save My Entity'),
+    '#submit' => $submit + array('my_entity_form_submit'),
+  );
+
+  // Show Delete button if we edit My Entity.
+  $eid = entity_id('my_entity', $my_entity);
+  if (!empty($eid) && my_entity_access('edit', $my_entity)) {
+    $form['actions']['delete'] = array(
+      '#type' => 'submit',
+      '#value' => t('Delete'),
+      '#submit' => array('my_entity_form_submit_delete'),
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * My Entity submit handler.
+ */
+function my_entity_form_submit($form, &$form_state) {
+  $my_entity = $form_state['my_entity'];
+
+  entity_form_submit_build_entity('my_entity', $my_entity, $form, $form_state);
+
+  my_entity_save($my_entity);
+
+  $my_entity_uri = entity_uri('my_entity', $my_entity);
+
+  $form_state['redirect'] = $my_entity_uri['path'];
+
+  drupal_set_message(t('My Entity %title saved.', array('%title' => entity_label('my_entity', $my_entity))));
+}
+
+/**
+ * My Entity delete submit handler.
+ */
+function my_entity_form_submit_delete($form, &$form_state) {
+  $my_entity = $form_state['my_entity'];
+  $my_entity_uri = entity_uri('my_entity', $my_entity);
+  $form_state['redirect'] = $my_entity_uri['path'] . '/delete';
+}
+
+/**
+ * Delete confirmation form.
+ */
+function my_entity_delete_form($form, &$form_state, $my_entity) {
+  $form_state['my_entity'] = $my_entity;
+  // Always provide entity id in the same form key as in the entity edit form.
+  $form['eid'] = array('#type' => 'value', '#value' => entity_id('my_entity', $my_entity));
+  $my_entity_uri = entity_uri('my_entity', $my_entity);
+  return confirm_form($form,
+    t('Are you sure you want to delete My Entity %title?', array('%title' => entity_label('my_entity', $my_entity))),
+    $my_entity_uri['path'],
+    t('This action cannot be undone.'),
+    t('Delete'),
+    t('Cancel')
+  );
+}
+
+/**
+ * Delete form submit handler.
+ */
+function my_entity_delete_form_submit($form, &$form_state) {
+  $my_entity = $form_state['my_entity'];
+  my_entity_delete($my_entity);
+
+  drupal_set_message(t('My Entity %title deleted.', array('%title' => entity_label('my_entity', $my_entity))));
+
+  $form_state['redirect'] = '<front>';
+}

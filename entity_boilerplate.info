@@ -1,0 +1,6 @@
+name = Entity Boilerplate
+description = Provides basic boilerplate to create an entity type from scratch.
+core = 7.x
+
+dependencies[] = entity
+dependencies[] = xautoload (>= 7.x-5.0)
