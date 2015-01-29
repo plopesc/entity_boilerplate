@@ -12,7 +12,7 @@
 /**
  * Access callback for My Entity.
  */
-function my_entity_access($op, $my_entity, $account = NULL, $entity_type = NULL) {
+function my_entity_access($op, $my_entity, $account = NULL) {
   return entity_boilerplate_entity_access($op, $my_entity, $account, 'my_entity');
 }
 

@@ -8,9 +8,6 @@
 namespace Drupal\entity_boilerplate\Entity\MyEntity;
 
 class MyEntityType extends \Entity {
-  public $type;
-  public $label;
-  public $weight = 0;
 
   public function __construct($values = array()) {
     parent::__construct($values, 'my_entity_type');
