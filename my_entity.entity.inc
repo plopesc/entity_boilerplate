@@ -82,42 +82,6 @@ function my_entity_type_form_submit(&$form, &$form_state) {
 }
 
 /**
- * Submit handler for deleting My Entity type.
- */
-function my_entity_type_form_submit_delete(&$form, &$form_state) {
-  $form_state['redirect'] = 'admin/structure/my_entity-types/' . $form_state['my_entity_type']->type . '/delete';
-}
-
-/**
- * My Entity type delete form.
- */
-function my_entity_type_form_delete_confirm($form, &$form_state, $my_entity_type) {
-  $form_state['my_entity_type'] = $my_entity_type;
-  // Always provide entity id in the same form key as in the entity edit form.
-  $form['my_entity_type_id'] = array('#type' => 'value', '#value' => entity_id('my_entity_type', $my_entity_type));
-  return confirm_form($form,
-    t('Are you sure you want to delete My Entity type %title?', array('%title' => entity_label('my_entity_type_type', $my_entity_type))),
-    'admin/structure/my_entity-types/' . entity_id('my_entity_type', $my_entity_type),
-    t('This action cannot be undone.'),
-    t('Delete'),
-    t('Cancel')
-  );
-}
-
-/**
- * My Entity type delete form submit handler.
- */
-function my_entity_type_form_delete_confirm_submit($form, &$form_state) {
-  $my_entity_type = $form_state['my_entity_type'];
-  my_entity_type_delete($my_entity_type);
-
-  watchdog('my_entity_type', '@type: deleted %title.', array('@type' => $my_entity_type->type, '%title' => $my_entity_type->label));
-  drupal_set_message(t('@type %title has been deleted.', array('@type' => $my_entity_type->type, '%title' => $my_entity_type->label)));
-
-  $form_state['redirect'] = 'admin/structure/my_entity-types';
-}
-
-/**
  * Page to select My Entity Type to add new My Entity.
  */
 function my_entity_admin_add_page() {
