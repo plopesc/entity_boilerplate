@@ -65,32 +65,49 @@ function entity_boilerplate_schema() {
   $schema['my_entity_type'] = array(
     'description' => 'Stores information about defined My Entity types.',
     'fields' => array(
-        'id' => array(
-          'type' => 'serial',
-          'not null' => TRUE,
-          'description' => 'Primary Key: Unique My Entity type identifier.',
-        ),
-        'type' => array(
-          'description' => 'The machine-readable name of this My Entity type.',
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-        ),
-        'label' => array(
-          'description' => 'The human-readable name of this My Entity type.',
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => '',
-        ),
-        'description' => array(
-          'description' => 'A brief description of this My Entity type.',
-          'type' => 'text',
-          'not null' => TRUE,
-          'size' => 'medium',
-          'translatable' => TRUE,
-        ),
-      ) + entity_exportable_schema_fields(),
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique My Entity type identifier.',
+      ),
+      'type' => array(
+        'description' => 'The machine-readable name of this My Entity type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'label' => array(
+        'description' => 'The human-readable name of this My Entity type.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'description' => array(
+        'description' => 'A brief description of this My Entity type.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'medium',
+        'translatable' => TRUE,
+      ),
+      // Copying columns from entity_exportable_schema_fields.
+      // See https://www.drupal.org/node/1122812
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        // Set the default to ENTITY_CUSTOM without using the constant as it is
+        // not safe to use it at this point.
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+    ),
     'primary key' => array('id'),
     'unique keys' => array(
       'type' => array('type'),
