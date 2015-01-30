@@ -27,7 +27,7 @@ function my_entity_type_form($form, &$form_state, $my_entity_type, $op = 'edit')
   // Machine-readable type name.
   $form['type'] = array(
     '#type' => 'machine_name',
-    '#default_value' => isset($my_entity_type->type) ? $my_entity_type->type : '',
+    '#default_value' => $my_entity_type->type,
     '#maxlength' => 32,
     '#disabled' => $my_entity_type->isLocked() && $op != 'clone',
     '#machine_name' => array(
