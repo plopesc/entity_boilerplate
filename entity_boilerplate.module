@@ -123,7 +123,7 @@ function entity_boilerplate_menu() {
   $items['my_entity/add'] = array(
     'title' => 'Add My Entity',
     'page callback' => 'my_entity_admin_add_page',
-    'access arguments' => array('administer my_entity entities'),
+    'access callback' => 'entity_boilerplate_my_entity_add_any_access',
     'file' => 'my_entity.entity.inc',
   );
 
@@ -190,6 +190,25 @@ function entity_boilerplate_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Access callback: determines if the user can create any type of My Entity.
+ */
+function entity_boilerplate_my_entity_add_any_access() {
+  // Grant automatic access to users with administer my_entity permission.
+  if (user_access('administer my_entity entities')) {
+    return TRUE;
+  }
+
+  // Check the user's access on a product type basis.
+  foreach (member_types() as $type => $member_type) {
+    if (member_access('create', entity_create('my_entity', array('type' => $type)))) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
 /**
