@@ -159,11 +159,11 @@ function entity_boilerplate_menu() {
 
   $items[$my_entity_uri . '/edit'] = array(
     'title' => 'Edit',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('my_entity_form', $my_entity_uri_argument_position),
+    'page callback' => 'my_entity_edit',
+    'page arguments' => array($my_entity_uri_argument_position),
     'access callback' => 'entity_access',
     'access arguments' => array('edit', 'my_entity', $my_entity_uri_argument_position),
-    'file' => 'my_entity.entity.inc',
+    'file' => 'my_entity.pages.inc',
     'type' => MENU_LOCAL_TASK,
     'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
   );
@@ -175,7 +175,7 @@ function entity_boilerplate_menu() {
       'page arguments' => array(2),
       'access callback' => 'entity_access',
       'access arguments' => array('create', 'my_entity', $type),
-      'file' => 'my_entity.entity.inc',
+      'file' => 'my_entity.pages.inc',
     );
   }
 
