@@ -104,20 +104,6 @@ function my_entity_admin_add_page() {
 }
 
 /**
- * Add new My Entity page callback.
- */
-function my_entity_add($type) {
-  $my_entity_type = my_entity_types($type);
-
-  $my_entity = entity_create('my_entity', array('type' => $type));
-  drupal_set_title(t('Create @name', array('@name' => entity_label('my_entity_type', $my_entity_type))));
-
-  $output = drupal_get_form('my_entity_form', $my_entity);
-
-  return $output;
-}
-
-/**
  * My Entity Form.
  */
 function my_entity_form($form, &$form_state, $my_entity) {

@@ -193,6 +193,19 @@ function entity_boilerplate_menu() {
 }
 
 /**
+ * Implements hook_forms().
+ */
+function entity_boilerplate_forms() {
+  $forms = array();
+  if ($types = my_entity_types()) {
+    foreach (array_keys($types) as $type) {
+      $forms[$type . '_my_entity_form']['callback'] = 'my_entity_form';
+    }
+  }
+  return $forms;
+}
+
+/**
  * Access callback: determines if the user can create any type of My Entity.
  */
 function entity_boilerplate_my_entity_add_any_access() {
@@ -202,8 +215,8 @@ function entity_boilerplate_my_entity_add_any_access() {
   }
 
   // Check the user's access on a product type basis.
-  foreach (member_types() as $type => $member_type) {
-    if (member_access('create', entity_create('my_entity', array('type' => $type)))) {
+  foreach (my_entity_types() as $type => $member_type) {
+    if (my_entity_access('create', entity_create('my_entity', array('type' => $type)))) {
       return TRUE;
     }
   }
