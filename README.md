@@ -33,13 +33,10 @@ entity type name.
 6. Search and replace all the appearances of "My Entity" with your human name
 entity type name.
   * IE: My Entity -> Example Artwork
-7. Search and replace all the appearances of "My Entity" with your human name
-entity type name.
-  * IE: My Entity -> Example Artwork
-8. Search and replace all the appearances of "entity_boilerplate" with your new
+7. Search and replace all the appearances of "entity_boilerplate" with your new
 module name.
   * IE: entity_boilerplate -> et_artwork
-9. Search and replace all the appearances of "eid" with your new entity id
+8. Search and replace all the appearances of "eid" with your new entity id
 property.
   * IE: eid -> aid
-10. You're done!
+9. You're done!
