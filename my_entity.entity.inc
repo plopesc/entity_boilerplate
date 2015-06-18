@@ -178,9 +178,15 @@ function my_entity_form_submit($form, &$form_state) {
  * My Entity delete submit handler.
  */
 function my_entity_form_submit_delete($form, &$form_state) {
+  $destination = array();
+  if (isset($_GET['destination'])) {
+    $destination = drupal_get_destination();
+    unset($_GET['destination']);
+  }
   $my_entity = $form_state['my_entity'];
   $my_entity_uri = entity_uri('my_entity', $my_entity);
-  $form_state['redirect'] = $my_entity_uri['path'] . '/delete';
+  $form_state['redirect'] = array($my_entity_uri['path'] . '/delete', array('query' => $destination));
+
 }
 
 /**
