@@ -263,8 +263,11 @@ function entity_boilerplate_query_my_entity_access_alter(QueryAlterableInterface
  *   The entity type of the entity to check for.
  *
  * @see entity_access()
+ *
+ * @return bool
+ *  Whether the user has access to perform the operation or not.
  */
-function entity_boilerplate_entity_access($op, $entity, $account, $entity_type) {
+function entity_boilerplate_entity_access($op, $entity, $account = NULL, $entity_type) {
   global $user;
   $account = isset($account) ? $account : $user;
 
@@ -553,7 +556,7 @@ function entity_boilerplate_entity_access_query_alter($query, $entity_type, $bas
 }
 
 /**
- * Implements hook_view_api().
+ * Implements hook_views_api().
  */
 function entity_boilerplate_views_api() {
   return array(
