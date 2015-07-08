@@ -158,6 +158,13 @@ function my_entity_form($form, &$form_state, $my_entity) {
 }
 
 /**
+ * My Entity validate callback.
+ */
+function my_entity_form_validate($form, &$form_state) {
+  entity_form_field_validate('my_entity', $form, $form_state);
+}
+
+/**
  * My Entity submit handler.
  */
 function my_entity_form_submit($form, &$form_state) {
