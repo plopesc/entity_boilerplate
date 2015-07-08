@@ -40,6 +40,12 @@ function entity_boilerplate_entity_info() {
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
     'module' => 'entity_boilerplate',
+    'admin ui' => array(
+      'path' => 'admin/content/my_entity',
+      'file' => 'my_entity.entity.inc',
+      'controller class' => '\Drupal\entity_boilerplate\Entity\MyEntity\MyEntityUIController',
+      'menu wildcard' => '%my_entity'
+    ),
   );
 
   // Add bundle info but bypass entity_load() as we cannot use it here.
@@ -112,84 +118,6 @@ function entity_boilerplate_entity_property_info_alter(&$info) {
     'required' => TRUE,
     'schema field' => 'uid',
   );
-}
-
-/**
- * Implements hook_menu().
- */
-function entity_boilerplate_menu() {
-  $items = array();
-
-  $items['my_entity/add'] = array(
-    'title' => 'Add My Entity',
-    'page callback' => 'my_entity_admin_add_page',
-    'access callback' => 'entity_boilerplate_my_entity_add_any_access',
-    'file' => 'my_entity.entity.inc',
-  );
-
-  $my_entity_uri = 'my_entity/%my_entity';
-  $my_entity_uri_argument_position = 1;
-
-  $items[$my_entity_uri] = array(
-    'title callback' => 'entity_label',
-    'title arguments' => array('my_entity', $my_entity_uri_argument_position),
-    'page callback' => 'my_entity_view',
-    'page arguments' => array($my_entity_uri_argument_position),
-    'access callback' => 'entity_access',
-    'access arguments' => array('view', 'my_entity', $my_entity_uri_argument_position),
-    'file' => 'my_entity.pages.inc',
-  );
-
-  $items[$my_entity_uri . '/view'] = array(
-    'title' => 'View',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-    'weight' => -10,
-  );
-
-  $items[$my_entity_uri . '/delete'] = array(
-    'title' => 'Delete My Entity',
-    'title callback' => 'my_entity_label',
-    'title arguments' => array($my_entity_uri_argument_position),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('my_entity_delete_form', $my_entity_uri_argument_position),
-    'access callback' => 'entity_access',
-    'access arguments' => array('edit', 'my_entity', $my_entity_uri_argument_position),
-    'file' => 'my_entity.entity.inc',
-  );
-
-  $items[$my_entity_uri . '/edit'] = array(
-    'title' => 'Edit',
-    'page callback' => 'my_entity_edit',
-    'page arguments' => array($my_entity_uri_argument_position),
-    'access callback' => 'entity_access',
-    'access arguments' => array('edit', 'my_entity', $my_entity_uri_argument_position),
-    'file' => 'my_entity.pages.inc',
-    'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
-  );
-
-  foreach (my_entity_types() as $type => $info) {
-    $items['my_entity/add/' . $type] = array(
-      'title' => 'Add My Entity',
-      'page callback' => 'my_entity_add',
-      'page arguments' => array(2),
-      'access callback' => 'entity_access',
-      'access arguments' => array('create', 'my_entity', $type),
-      'file' => 'my_entity.pages.inc',
-    );
-  }
-
-  $items['admin/structure/my_entity-types/manage/%my_entity_type/delete'] = array(
-    'title' => 'Delete',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('my_entity_type_form_delete_confirm', 4),
-    'access arguments' => array('administer my_entity types'),
-    'weight' => 1,
-    'type' => MENU_NORMAL_ITEM,
-    'file' => 'my_entity.entity.inc',
-  );
-
-  return $items;
 }
 
 /**
