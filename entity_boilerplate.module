@@ -40,6 +40,7 @@ function entity_boilerplate_entity_info() {
     'label callback' => 'entity_class_label',
     'uri callback' => 'entity_class_uri',
     'module' => 'entity_boilerplate',
+    'views controller class' => 'MyEntityViewsController',
   );
 
   // Add bundle info but bypass entity_load() as we cannot use it here.

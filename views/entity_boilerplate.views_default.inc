@@ -1,33 +1,6 @@
 <?php
 
 /**
- * Implements hook_views_data().
- */
-function entity_boilerplate_views_data_alter(&$data) {
-  $data['my_entity']['link_my_entity'] = array(
-    'field' => array(
-      'title' => t('Link'),
-      'help' => t('Provide a link to the My Entity.'),
-      'handler' => '\Drupal\entity_boilerplate\Plugin\views\Handlers\MyEntityLink',
-    ),
-  );
-  $data['my_entity']['edit_my_entity'] = array(
-    'field' => array(
-      'title' => t('Edit Link'),
-      'help' => t('Provide a link to the edit form for the My Entity.'),
-      'handler' => '\Drupal\entity_boilerplate\Plugin\views\Handlers\MyEntityEdit',
-    ),
-  );
-  $data['my_entity']['delete_my_entity'] = array(
-    'field' => array(
-      'title' => t('Delete Link'),
-      'help' => t('Provide a link to delete the My Entity.'),
-      'handler' => '\Drupal\entity_boilerplate\Plugin\views\Handlers\MyEntityDelete',
-    ),
-  );
-}
-
-/**
  * Implements hook_views_default_views().
  */
 function entity_boilerplate_views_default_views() {
@@ -135,7 +108,7 @@ function entity_boilerplate_views_default_views() {
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['context'] = 0;
   $handler->display->display_options['menu']['context_only_inline'] = 0;
-    
+
   $views['my_entity_list'] = $view;
   return $views;
 
