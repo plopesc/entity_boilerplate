@@ -17,10 +17,25 @@ class MyEntity extends \Entity implements MyEntityInterface {
   public $description;
 
   /**
+   * The My Entity changed timestamp.
+   *
+   * @var int
+   */
+  public $changed;
+
+  /**
    * {@inheritdoc}
    */
   protected function defaultUri() {
     return array('path' => 'my_entity/' . $this->identifier());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    $this->changed = REQUEST_TIME;
+    parent::save();
   }
 
 }
