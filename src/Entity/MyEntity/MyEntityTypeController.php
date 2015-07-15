@@ -16,6 +16,7 @@ class MyEntityTypeController extends \EntityAPIControllerExportable {
     $values += array(
       'label' => '',
       'description' => '',
+      'type' => '',
     );
     return parent::create($values);
   }
