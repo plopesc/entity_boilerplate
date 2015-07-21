@@ -19,7 +19,7 @@ class MyEntityEdit extends MyEntityLink {
     }
 
     $this->options['alter']['make_link'] = TRUE;
-    $this->options['alter']['path'] = "my_entity/$entity->eid/edit";
+    $this->options['alter']['path'] = "admin/content/my_entity/$entity->eid/edit";
     $this->options['alter']['query'] = drupal_get_destination();
 
     $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');

@@ -37,7 +37,7 @@ class MyEntityLink extends \views_handler_field_entity {
   function render_link($entity, $values) {
     if (my_entity_access('view', $entity)) {
       $this->options['alter']['make_link'] = TRUE;
-      $this->options['alter']['path'] = "my_entity/$entity->eid";
+      $this->options['alter']['path'] = "admin/content/my_entity/$entity->eid";
       $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
       return $text;
     }
