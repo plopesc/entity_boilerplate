@@ -109,6 +109,15 @@ function my_entity_admin_add_page() {
 function my_entity_form($form, &$form_state, $my_entity) {
   $form_state['my_entity'] = $my_entity;
 
+  // Basic my_entity information.
+  // These elements are just values so they are not even sent to the client.
+  foreach (array('eid', 'uid', 'created', 'type') as $key) {
+    $form[$key] = array(
+      '#type' => 'value',
+      '#value' => isset($my_entity->$key) ? $my_entity->$key : NULL,
+    );
+  }
+
   $form['title'] = array(
     '#type' => 'textfield',
     '#required' => TRUE,
