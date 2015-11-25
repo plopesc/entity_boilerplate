@@ -505,15 +505,15 @@ function entity_boilerplate_field_extra_fields() {
   $property_info = entity_get_property_info($entity_type);
 
   foreach ($property_info['bundles'] as $bundle_name => $bundle) {
-    foreach ($property_info['properties'] as $property_name => $property_info) {
+    foreach ($property_info['properties'] as $property_name => $info) {
       $extra[$entity_type][$bundle_name]['form'][$property_name] = array(
-        'label' => $property_info['label'],
+        'label' => $info['label'],
         'description' => t('Entity property'),
         'weight' => 0,
       );
 
       $extra[$entity_type][$bundle_name]['display'][$property_name] = array(
-        'label' => $property_info['label'],
+        'label' => $info['label'],
         'description' => t('Entity property'),
         'weight' => 0,
       );
